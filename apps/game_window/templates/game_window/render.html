@@ -47,13 +47,17 @@
     var ray, ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8
     var txloader = new THREE.TextureLoader();
     var Modelloader = new THREE.GLTFLoader();
-    var meshFloor;
+    var meshFloor = new THREE.Mesh(
+        new THREE.PlaneGeometry(5, 5, 5, 5),
+        new THREE.MeshBasicMaterial({ color: 0xeeeeee })//, wireframe: USE_WIREFRAME })
+    );
     var keyboard = {};
     var player = {
         height: 1.8,
         speed: 0.2,
         turnSpeed: Math.PI * 0.02
     };
+    // var bbox;
     var ArrayPosition = [];
     var startPosition = [];
     var CurrentTile = [];
@@ -72,6 +76,7 @@
         if (loaded == total) {
             activeplayer = scene.getObjectByName("player-{{ request.user.id }}")
             camera = getCamera()
+            // bbox = new THREE.Box3().setFromObject(colliders)
             animate()
             startGame()
         }
@@ -182,7 +187,7 @@
                     x += 20;
                 }
 
-            } 
+            }
             x = 0;
             y += 20;
         }
@@ -199,7 +204,7 @@
 
     };
 
-    
+
     var terrain = [];
     function addModel(model, x, y, objname, scale, path, player = "NULL", rotation = ["n", "n", "n"], vertical) {
 
@@ -228,7 +233,7 @@
                 // ray1 = new THREE.Raycaster();
                 // ray1.set(rayCubeRR.position, new THREE.Vector3(-1, 0, 0));
                 // ray2 = new THREE.Raycaster();
-                // ray2.set(rayCubeRR.position, new THREE.Vector3(0, 0, -1));
+                // ray2.set(rayCubeRR.position, new THREE.Vector3(0, -1, 0));
                 // rayCubeRR.add(ray1);
                 // rayCubeRR.add(ray2);
 
@@ -243,7 +248,7 @@
                 // ray3 = new THREE.Raycaster();
                 // ray3.set(rayCubeLR.position, new THREE.Vector3(-1, 0, 0));
                 // ray4 = new THREE.Raycaster();
-                // ray4.set(rayCubeLR.position, new THREE.Vector3(0, 0, -1));
+                // ray4.set(rayCubeLR.position, new THREE.Vector3(0, 1, 0));
                 // rayCubeLR.add(ray3);
                 // rayCubeLR.add(ray4);
 
@@ -259,7 +264,7 @@
                 // ray5 = new THREE.Raycaster();
                 // ray5.set(rayCubeFL.position, new THREE.Vector3(1, 0, 0))
                 // ray6 = new THREE.Raycaster();
-                // ray6.set(rayCubeFL.position, new THREE.Vector3(0, 0, -1))
+                // ray6.set(rayCubeFL.position, new THREE.Vector3(0, 1, 0))
                 // rayCubeFL.add(ray5);
                 // rayCubeFL.add(ray6);
 
@@ -275,7 +280,7 @@
                 // ray7 = new THREE.Raycaster();
                 // ray7.set(rayCubeFR.position, new THREE.Vector3(1, 0, 0))
                 // ray8 = new THREE.Raycaster();
-                // ray8.set(rayCubeFR.position, new THREE.Vector3(0, 0, -1))
+                // ray8.set(rayCubeFR.position, new THREE.Vector3(0, -1, 0))
                 // rayCubeFR.add(ray7);
                 // rayCubeFR.add(ray8);
 
@@ -299,7 +304,8 @@
         })
     }
 
-
+    var colliders = new THREE.Group();
+    meshFloor.add(colliders)
     function addPlane(texture, loader = txloader, x, y) {
         loader.setPath("{% static '/game_window/images/textures/'%}")
         var texture = loader.load(texture);
@@ -313,14 +319,19 @@
         plane.position.z = .1;
         plane.position.x = x;
         plane.position.y = y;
-        if (texture == "dirt.png" || texture == "startfinish.jpg") {
-            plains.push(
-                {}
-            );
-            //console.log(plane.position.x)
-        }
+        // if (texture == "dirt.png" || texture == "startfinish.jpg") {
+        //     plains.push(
+        //         {}
+        //     );
+        //     //console.log(plane.position.x)
+        // }
         //plane.rotation.x = Math.PI / 2;
-        meshFloor.add(plane);
+
+        if (texture == "grass.png" || texture == "fence") {
+            colliders.add(plane)
+        } else {
+            meshFloor.add(plane);
+        }
     }
     function getCamera() {
         var aspectRatio = window.innerWidth / window.innerHeight;
@@ -338,23 +349,18 @@
         camera.position.z = cameraOffset.z;
         camera.lookAt(activeplayer.position);
     }
-    function checkForHit() {
-        var hit;
-        hit = ray1.intersectObjects(plains);
-        // hit += ray2.intersectObjects(plains).length;
-        // hit += ray3.intersectObjects(plains).length;
-        // hit += ray4.intersectObjects(plains).length;
-        // hit += ray5.intersectObjects(plains).length;
-        // hit += ray6.intersectObjects(plains).length;
-        // hit += ray7.intersectObjects(plains).length;
-        // hit += ray8.intersectObjects(plains).length;
+    // function checkForHit() {
+    //     var hit1 = ray1.intersectObjects(colliders);
+    //     var hit2 = ray2.intersectObjects(colliders);
+    //     var hit3 = ray3.intersectObjects(colliders);
+    //     var hit4 = ray4.intersectObjects(colliders);
+    //     var hit5 = ray5.intersectObjects(colliders);
+    //     var hit6 = ray6.intersectObjects(colliders);
+    //     var hit7 = ray7.intersectObjects(colliders);
+    //     var hit8 = ray8.intersectObjects(colliders);
 
-        if (hit > 0) {
-
-        }
-
-        console.log(hit);
-    }
+    //     console.log(hit1);
+    // }
 
     function init() {
 
@@ -372,10 +378,7 @@
         // var boxMat = new THREE.MeshBasicMaterial({color: 0x8bd6f8,side:THREE.BackSide});
         // var skyBox = new THREE.Mesh(boxGeo,boxMat)
 
-        meshFloor = new THREE.Mesh(
-            new THREE.PlaneGeometry(5, 5, 5, 5),
-            new THREE.MeshBasicMaterial({ color: 0xeeeeee })//, wireframe: USE_WIREFRAME })
-        );
+
         // meshFloor.add(skyBox);
         meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
         scene.add(meshFloor);
@@ -388,36 +391,43 @@
     // function checkValidMovement()
     //     if (ArrayPosition[0])
 
-    function getLocalTiles(i, j) {
-        ArrayPosition = [
-            { "valid": worldArray[i][j], "y": i, "x": j, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
-            { "valid": worldArray[i - 1][j], "y": i - 1, "x": j, "ymin": ((i - 1) * 20) - 10, "ymax": ((i - 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
-            { "valid": worldArray[i + 1][j], "y": i + 1, "x": j, "ymin": ((i + 1) * 20) - 10, "ymax": ((i + 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
-            { "valid": worldArray[i][j - 1], "y": i, "x": j - 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j - 1) * 20) - 10, "xmax": ((j - 1) * 20) + 10 },
-            { "valid": worldArray[i][j + 1], "y": i, "x": j + 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j + 1) * 20) - 10, "xmax": ((j + 1) * 20) + 10 }]
-    }
+    // function getLocalTiles(i, j) {
+    //     ArrayPosition = [
+    //         { "valid": worldArray[i][j], "y": i, "x": j, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+    //         { "valid": worldArray[i - 1][j], "y": i - 1, "x": j, "ymin": ((i - 1) * 20) - 10, "ymax": ((i - 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+    //         { "valid": worldArray[i + 1][j], "y": i + 1, "x": j, "ymin": ((i + 1) * 20) - 10, "ymax": ((i + 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+    //         { "valid": worldArray[i][j - 1], "y": i, "x": j - 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j - 1) * 20) - 10, "xmax": ((j - 1) * 20) + 10 },
+    //         { "valid": worldArray[i][j + 1], "y": i, "x": j + 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j + 1) * 20) - 10, "xmax": ((j + 1) * 20) + 10 }]
+    // }
 
-    function checkPosition(){
-        
-    }
+    // function checkPosition(){
+
+    // }
 
     function movePlayer() {
         var delta = clock.getDelta();
         var moveDistance = 40 * delta;
         var rotateAngle = Math.PI / 2 * delta;
+        // var xplus = activeplayer.position.x + moveDistance;
+        // var zplus = activeplayer.position.z + moveDistance;
+        // var xmin = activeplayer.position.x - moveDistance;
+        // var zplus = activeplayer.position.z - moveDistance;
+
         if (keyboard[87]) { // W 
-            for (i=0){
-                
-            }
-            console.log(activeplayer.position.x + moveDistance)
-            console.log(activeplayer.position.z + moveDistance)
-            console.log(activeplayer.translateX(moveDistance))
+
+            //     if (xplus >= ArrayPosition[0]['xmax']) {
+            //         if (ArrayPosition[2]['valid'] == 2 || ArrayPosition[2]['valid'] == 3 || ArrayPosition[2][valid] == 5){
+            //             activeplayer.translateX(moveDistance)
+            //         }
+            //     }
+            // }
+
+            activeplayer.translateX(moveDistance)
 
         }
         if (keyboard[83]) { // S key
-            console.log(activeplayer.position.x - moveDistance)
-            console.log(activeplayer.position.z - moveDistance)
-            console.log(activeplayer.translateX(-moveDistance))
+
+            activeplayer.translateX(-moveDistance)
         }
 
         var rotation_matrix = new THREE.Matrix4().identity();
