@@ -44,6 +44,7 @@
         renderer,
         mesh;
     var level;
+    var ray, ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8
     var txloader = new THREE.TextureLoader();
     var Modelloader = new THREE.GLTFLoader();
     var meshFloor;
@@ -53,9 +54,12 @@
         speed: 0.2,
         turnSpeed: Math.PI * 0.02
     };
-    var startPosition = []
+    var ArrayPosition = [];
+    var startPosition = [];
+    var CurrentTile = [];
     var clock = new THREE.Clock();
     var playerarray = []
+    var plains = [];
     var players = JSON.parse("{{ players|escapejs }}")
     for (x in players) {
         playerarray.push({
@@ -173,36 +177,109 @@
                     addPlane(tarray[worldArray[i][j]], txloader, x, y);
                     if (worldArray[i][j] == 3) {
                         startPosition = [x, y]
+                        CurrentTile = worldArray[i][j]
                     }
                     x += 20;
                 }
-            }
+
+            } 
             x = 0;
             y += 20;
         }
+
     }
+
     function loadPlayers() {
         for (var i = 0; i < playerarray.length; i++) {
-            var pokeid = (playerarray[i]['pokemon'])
-            console.log(pokeid)
+            var pokeid = (playerarray[i]['pokemon']);
+            console.log(pokeid);
 
-            addModel('scene.gltf', startPosition[0], startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
-        }
+            addModel('scene.gltf', startPosition[0] + 5 - i * 6, startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id']);
+        };
 
-    }
+    };
+
+    
+    var terrain = [];
     function addModel(model, x, y, objname, scale, path, player = "NULL", rotation = ["n", "n", "n"], vertical) {
 
-        Modelloader.setPath(path)
+        Modelloader.setPath(path);
         Modelloader.load(model, function (gltf) {
             newobj = gltf.scene.getObjectByName(objname.toString(), true);
             newobj.position.x = x;
-
-            newobj.scale.set(scale[0], scale[1], scale[2])
+            // if (objname == "grass") {
+            //     plains.push(newobj)
+            // }
+            newobj.scale.set(scale[0], scale[1], scale[2]);
             if (player != "NULL") {
                 newobj.name = player;
                 newobj.rotation.x -= Math.PI / 2;
                 newobj.rotation.z -= Math.PI / 2;
                 newobj.position.z = -y;
+
+                // var geometry = new THREE.BoxGeometry(1, 1, 1);
+                // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                // material.visible = true;
+                // rayCubeRR = new THREE.Mesh(geometry, material);
+                // rayCubeRR.position.x -= 6;
+                // rayCubeRR.position.y -= 2;
+                // rayCubeRR.position.z += 1;
+                // newobj.add(rayCubeRR);
+                // ray1 = new THREE.Raycaster();
+                // ray1.set(rayCubeRR.position, new THREE.Vector3(-1, 0, 0));
+                // ray2 = new THREE.Raycaster();
+                // ray2.set(rayCubeRR.position, new THREE.Vector3(0, 0, -1));
+                // rayCubeRR.add(ray1);
+                // rayCubeRR.add(ray2);
+
+                // var geometry = new THREE.BoxGeometry(1, 1, 1);
+                // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                // material.visible = true;
+                // rayCubeLR = new THREE.Mesh(geometry, material);
+                // rayCubeLR.position.x -= 6;
+                // rayCubeLR.position.y += 2;
+                // rayCubeLR.position.z += 2;
+                // newobj.add(rayCubeLR);
+                // ray3 = new THREE.Raycaster();
+                // ray3.set(rayCubeLR.position, new THREE.Vector3(-1, 0, 0));
+                // ray4 = new THREE.Raycaster();
+                // ray4.set(rayCubeLR.position, new THREE.Vector3(0, 0, -1));
+                // rayCubeLR.add(ray3);
+                // rayCubeLR.add(ray4);
+
+                // var geometry = new THREE.BoxGeometry(1, 1, 1);
+                // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                // material.visible = true;
+                // rayCubeFL = new THREE.Mesh(geometry, material);
+                // rayCubeFL.material.transparent = true;
+                // rayCubeFL.position.x += 6;
+                // rayCubeFL.position.y += 2;
+                // rayCubeFL.position.z += 1;
+                // newobj.add(rayCubeFL);
+                // ray5 = new THREE.Raycaster();
+                // ray5.set(rayCubeFL.position, new THREE.Vector3(1, 0, 0))
+                // ray6 = new THREE.Raycaster();
+                // ray6.set(rayCubeFL.position, new THREE.Vector3(0, 0, -1))
+                // rayCubeFL.add(ray5);
+                // rayCubeFL.add(ray6);
+
+                // var geometry = new THREE.BoxGeometry(1, 1, 1);
+                // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                // material.visible = true;
+                // rayCubeFR = new THREE.Mesh(geometry, material);
+                // rayCubeFR.material.transparent = true;
+                // rayCubeFR.position.x += 6;
+                // rayCubeFR.position.y -= 2;
+                // rayCubeFR.position.z += 1;
+                // newobj.add(rayCubeFR);
+                // ray7 = new THREE.Raycaster();
+                // ray7.set(rayCubeFR.position, new THREE.Vector3(1, 0, 0))
+                // ray8 = new THREE.Raycaster();
+                // ray8.set(rayCubeFR.position, new THREE.Vector3(0, 0, -1))
+                // rayCubeFR.add(ray7);
+                // rayCubeFR.add(ray8);
+
+
                 scene.add(newobj)
             } else {
                 if (rotation[0] != "n") {
@@ -219,10 +296,10 @@
                 meshFloor.add(newobj)
             }
 
-
-
         })
     }
+
+
     function addPlane(texture, loader = txloader, x, y) {
         loader.setPath("{% static '/game_window/images/textures/'%}")
         var texture = loader.load(texture);
@@ -236,12 +313,18 @@
         plane.position.z = .1;
         plane.position.x = x;
         plane.position.y = y;
+        if (texture == "dirt.png" || texture == "startfinish.jpg") {
+            plains.push(
+                {}
+            );
+            //console.log(plane.position.x)
+        }
         //plane.rotation.x = Math.PI / 2;
         meshFloor.add(plane);
     }
     function getCamera() {
         var aspectRatio = window.innerWidth / window.innerHeight;
-        var camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 2000);
         camera.position.set(0, 150, 400);
         camera.lookAt(scene.position);
         return camera;
@@ -255,8 +338,26 @@
         camera.position.z = cameraOffset.z;
         camera.lookAt(activeplayer.position);
     }
+    function checkForHit() {
+        var hit;
+        hit = ray1.intersectObjects(plains);
+        // hit += ray2.intersectObjects(plains).length;
+        // hit += ray3.intersectObjects(plains).length;
+        // hit += ray4.intersectObjects(plains).length;
+        // hit += ray5.intersectObjects(plains).length;
+        // hit += ray6.intersectObjects(plains).length;
+        // hit += ray7.intersectObjects(plains).length;
+        // hit += ray8.intersectObjects(plains).length;
+
+        if (hit > 0) {
+
+        }
+
+        console.log(hit);
+    }
 
     function init() {
+
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(1280, 720);
         document.body.appendChild(renderer.domElement);
@@ -265,39 +366,69 @@
         var light = new THREE.SpotLight(0xF9FCFF);
         light.position.set(0, 1000, 0);
         scene.add(light);
+        var amb_light = new THREE.AmbientLight(0xF9FCFF, 1);
+        scene.add(amb_light);
+        // var boxGeo = new THREE.BoxGeometry(3000,3000,3000);
+        // var boxMat = new THREE.MeshBasicMaterial({color: 0x8bd6f8,side:THREE.BackSide});
+        // var skyBox = new THREE.Mesh(boxGeo,boxMat)
 
         meshFloor = new THREE.Mesh(
             new THREE.PlaneGeometry(5, 5, 5, 5),
             new THREE.MeshBasicMaterial({ color: 0xeeeeee })//, wireframe: USE_WIREFRAME })
         );
+        // meshFloor.add(skyBox);
         meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
         scene.add(meshFloor);
         buildWorld();
         loadPlayers()
+        //alert(terrain)
+        //alert(plains)
+
     };
+    // function checkValidMovement()
+    //     if (ArrayPosition[0])
+
+    function getLocalTiles(i, j) {
+        ArrayPosition = [
+            { "valid": worldArray[i][j], "y": i, "x": j, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+            { "valid": worldArray[i - 1][j], "y": i - 1, "x": j, "ymin": ((i - 1) * 20) - 10, "ymax": ((i - 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+            { "valid": worldArray[i + 1][j], "y": i + 1, "x": j, "ymin": ((i + 1) * 20) - 10, "ymax": ((i + 1) * 20) + 10, "xmin": (j * 20) - 10, "xmax": (j * 20) + 10 },
+            { "valid": worldArray[i][j - 1], "y": i, "x": j - 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j - 1) * 20) - 10, "xmax": ((j - 1) * 20) + 10 },
+            { "valid": worldArray[i][j + 1], "y": i, "x": j + 1, "ymin": (i * 20) - 10, "ymax": (i * 20) + 10, "xmin": ((j + 1) * 20) - 10, "xmax": ((j + 1) * 20) + 10 }]
+    }
+
+    function checkPosition(){
+        
+    }
 
     function movePlayer() {
         var delta = clock.getDelta();
         var moveDistance = 40 * delta;
         var rotateAngle = Math.PI / 2 * delta;
         if (keyboard[87]) { // W 
-            activeplayer.translateX(moveDistance)
+            for (i=0){
+                
+            }
+            console.log(activeplayer.position.x + moveDistance)
+            console.log(activeplayer.position.z + moveDistance)
+            console.log(activeplayer.translateX(moveDistance))
 
         }
         if (keyboard[83]) { // S key
-
-            activeplayer.translateX(-moveDistance);
+            console.log(activeplayer.position.x - moveDistance)
+            console.log(activeplayer.position.z - moveDistance)
+            console.log(activeplayer.translateX(-moveDistance))
         }
 
         var rotation_matrix = new THREE.Matrix4().identity();
         if (keyboard[65]) { // A keyad
 
             activeplayer.rotateOnAxis(new THREE.Vector3(0, 0, 1), rotateAngle);
-            camera.rotation.z -= player.turnSpeed;
+            camera.rotation.y -= player.turnSpeed;
         }
         if (keyboard[68]) { // D key
             activeplayer.rotateOnAxis(new THREE.Vector3(0, 0, 1), -rotateAngle);
-            camera.rotation.z += player.turnSpeed;
+            camera.rotation.y += player.turnSpeed;
         }
 
         // Keyboard turn inputs
@@ -308,13 +439,15 @@
             camera.rotation.y += player.turnSpeed;
         }
 
-        // if (keyboard[32]) {
-        //     console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
-        //     spawnPoke(activeplayer.position.x, activeplayer.position.z)
-        // }
+        if (keyboard[32]) {
+            console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
+            console.log(ArrayPosition)
+            //     spawnPoke(activeplayer.position.x, activeplayer.position.z)
+        }
 
         var rot = activeplayer.rotation
         var pos = [activeplayer.position.x, activeplayer.position.z, "{{request.user.id}}", rot]
+        //console.log(pos)
 
         GameSocket.send(JSON.stringify({
             'position': pos
@@ -339,6 +472,7 @@
 
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
+        // checkForHit();
         movePlayer()
         moveCamera()
 
