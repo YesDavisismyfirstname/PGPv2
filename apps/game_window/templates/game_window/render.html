@@ -37,7 +37,7 @@
         console.error('Chat socket closed unexpectedly');
     };
 
-
+    var pokearray = [13, 19, 21];
     var scene
     var camera,
         renderer,
@@ -95,11 +95,7 @@
         }, 1000)
     }
 
-    var pokearray = [13,19,21];
-    function spawnPoke (x,z) {
-        id = pokearray[Math.floor(Math.random() * 3)]
-        addModel('scene.gltf',x,z,id,[.3,.3,.3],"{% static '/game_window/images/bulby/'%}"+id+"/", "Spawn" + Math.floor(Math.random() * 1000))
-    }
+
 
 
     tarray = {
@@ -122,7 +118,7 @@
         [4, 4, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
         [4, 4, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
         [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
+        [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
         [4, 4, 2, 2, 4, 6, 2, 2, 2, 2, 2, 2, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 6, 4, 4],
         [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4],
         [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 5, 4, 4],
@@ -153,8 +149,8 @@
         [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
     ]
@@ -189,7 +185,7 @@
             var pokeid = (playerarray[i]['pokemon'])
             console.log(pokeid)
 
-            addModel('scene.gltf', startPosition[0] + 15, startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
+            addModel('scene.gltf', startPosition[0], startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
         }
 
     }
@@ -230,7 +226,7 @@
         loader.setPath("{% static '/game_window/images/textures/'%}")
         var texture = loader.load(texture);
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(10, 10);
+        texture.repeat.set(3, 3);
         var material = new THREE.MeshBasicMaterial({
             map: texture, side: THREE.DoubleSide
         });
@@ -249,6 +245,7 @@
         camera.lookAt(scene.position);
         return camera;
     }
+
     function moveCamera() {
         var relativeCameraOffset = new THREE.Vector3(-25, 0, 9);
         var cameraOffset = relativeCameraOffset.applyMatrix4(activeplayer.matrixWorld);
@@ -257,9 +254,10 @@
         camera.position.z = cameraOffset.z;
         camera.lookAt(activeplayer.position);
     }
+
     function init() {
         renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(1280, 720);
         document.body.appendChild(renderer.domElement);
 
         scene = new THREE.Scene();
@@ -308,9 +306,11 @@
         if (keyboard[39]) { // right arrow key
             camera.rotation.y += player.turnSpeed;
         }
-        if (keyboard[32]){
-            console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
-        }
+
+        // if (keyboard[32]) {
+        //     console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
+        //     spawnPoke(activeplayer.position.x, activeplayer.position.z)
+        // }
 
         var rot = activeplayer.rotation
         var pos = [activeplayer.position.x, activeplayer.position.z, "{{request.user.id}}", rot]
@@ -319,6 +319,21 @@
             'position': pos
         }));
     }
+
+
+
+
+
+    function spawnPoke(x, z) {
+        id = pokearray[Math.floor(Math.random() * 3)]
+        console.log(id)
+        addModel('scene.gltf', x, z, id, [.3, .3, .3], "{% static '/game_window/images/bulby/'%}" + id + "/", "Spawn" + Math.floor(Math.random() * 1000))
+    }
+
+
+
+
+
     function animate() {
 
         requestAnimationFrame(animate);
