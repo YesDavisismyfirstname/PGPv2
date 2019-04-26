@@ -25,11 +25,12 @@
         console.error('Chat socket closed unexpectedly');
     };
 
-
+    
     var scene
     var camera,
         renderer,
         mesh;
+    var tree;
     var level;
     var txloader = new THREE.TextureLoader();
     var meshFloor;
@@ -40,7 +41,7 @@
         turnSpeed: Math.PI * 0.02
     };
     var clock = new THREE.Clock();
-
+    var ray,ray1,ray2,ray3,ray4,ray5,ray6,ray7,ray8
     var playerarray = []
     var players = JSON.parse("{{ players|escapejs }}")
     for (x in players) {
@@ -62,25 +63,27 @@
         0: ["",.3,"{% static '/game_window/images/bulby/' %}"],
     }
     worldArray = [
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,2,2,2,2,2,2,2,5,2,2,2,2,2,2,2,2,2,2,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,2,1],
-        [1,3,1,1,1,1,1,1,1,4,4,4,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-        [1,2,2,2,2,2,2,5,2,2,2,2,2,5,2,2,2,2,2,2,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    ]
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,1,2,2,2,2,2,2,2,5,2,2,2,2,2,2,2,2,2,2,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,3,1,1,1,1,1,1,1,4,4,4,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,6,1,1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1],
+        [1,1,2,2,2,2,2,2,5,2,2,2,2,2,5,2,2,2,2,2,2,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
     function buildWorld() {
         var x = 0;
         var y = 0;
@@ -100,7 +103,7 @@
             y += 20;
         }
 
-
+        
 
     }
     function loadModels() {
@@ -113,7 +116,75 @@
             model.rotation.x -= Math.PI / 2;
             model.rotation.z -= Math.PI / 2;
             model.scale.set(0.3, 0.3, 0.3);
-            scene.add(model);
+
+            
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeRR = new THREE.Mesh( geometry, material );
+            rayCubeRR.position.x -= 6; 
+            rayCubeRR.position.y -=2;
+            rayCubeRR.position.z += 1;
+            model.add(rayCubeRR);            
+            ray1 = new THREE.Raycaster();
+            ray1.set(rayCubeRR.position, new THREE.Vector3(-1, 0, 0))
+            ray2 = new THREE.Raycaster();
+            ray2.set(rayCubeRR.position, new THREE.Vector3(0, -1, 0))
+            rayCubeRR.add(ray1);
+            rayCubeRR.add(ray2);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeLR = new THREE.Mesh( geometry, material );            
+            rayCubeLR.position.x -= 6;
+            rayCubeLR.position.y +=2;
+            rayCubeLR.position.z += 1;
+            model.add(rayCubeLR);
+            ray3 = new THREE.Raycaster();
+            ray3.set(rayCubeLR.position, new THREE.Vector3(-1, 0, 0))
+            ray4 = new THREE.Raycaster();
+            ray4.set(rayCubeLR.position, new THREE.Vector3(0, 1, 0))
+            rayCubeLR.add(ray3);
+            rayCubeLR.add(ray4);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeFL = new THREE.Mesh( geometry, material );
+            rayCubeFL.material.transparent = true;
+            rayCubeFL.position.x += 6;
+            rayCubeFL.position.y +=2;
+            rayCubeFL.position.z += 1;
+            model.add(rayCubeFL);
+            ray5 = new THREE.Raycaster();
+            ray5.set(rayCubeFL.position, new THREE.Vector3(1, 0, 0))
+            ray6 = new THREE.Raycaster();
+            ray6.set(rayCubeFL.position, new THREE.Vector3(0, 1, 0))
+            rayCubeFL.add(ray5);
+            rayCubeFL.add(ray6);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeFR = new THREE.Mesh( geometry, material );
+            rayCubeFR.material.transparent = true;
+            rayCubeFR.position.x += 6;
+            rayCubeFR.position.y -=2;
+            rayCubeFR.position.z += 1;
+            model.add(rayCubeFR);
+            ray7 = new THREE.Raycaster();
+            ray7.set(rayCubeFR.position, new THREE.Vector3(1, 0, 0))
+            ray8 = new THREE.Raycaster();
+            ray8.set(rayCubeFR.position, new THREE.Vector3(0, -1, 0))
+            rayCubeFR.add(ray7);
+            rayCubeFR.add(ray8);
+            
+            
+            
+            
+            scene.add(model);  
         };
         ModelCount = 1
 
@@ -191,6 +262,28 @@
         camera.lookAt(activeplayer.position);
     }
 
+    function checkForHit() {
+        var hit = 0;
+        hit += ray1.intersectObjects(meshFloor.children).length;
+        hit += ray2.intersectObjects(meshFloor.children).length;
+        hit += ray3.intersectObjects(meshFloor.children).length;
+        hit += ray4.intersectObjects(meshFloor.children).length;
+        hit += ray5.intersectObjects(meshFloor.children).length;
+        hit += ray6.intersectObjects(meshFloor.children).length;
+        hit += ray7.intersectObjects(meshFloor.children).length;
+        hit += ray8.intersectObjects(meshFloor.children).length;
+
+        console.log(hit);
+        
+        
+        
+           
+    }
+           
+       
+       
+    
+
     function init() {
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(1280, 720);
@@ -200,6 +293,10 @@
         var light = new THREE.SpotLight(0xF9FCFF);
         light.position.set(0, 1000, 0);
         scene.add(light);
+
+        var amb_light = new THREE.AmbientLight(0xF9FCFF,2);
+        scene.add(amb_light);
+        
 
         meshFloor = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100, 100, 100),
@@ -252,8 +349,9 @@
     function animate() {
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
-        movePlayer()
-        moveCamera()
+        checkForHit();
+        movePlayer();
+        moveCamera();
     }
 
     function keyDown(event) {
