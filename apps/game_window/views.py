@@ -10,7 +10,7 @@ def gamewindow(request):
 
 def launchgame(request, room_id):
     lobby = Lobbies.objects.get(id=room_id)
-    players =  serializers.serialize('json', lobby.player.all(), fields=('user',))
+    players =  serializers.serialize('json', lobby.player.all(), fields=('user','riding'))
     ctx = {
         "players" : players,
         'game_id_json': mark_safe(json.dumps(room_id)),
