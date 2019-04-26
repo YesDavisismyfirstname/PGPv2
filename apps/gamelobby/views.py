@@ -35,6 +35,8 @@ def pvpNew(request):
         if newlob.is_valid():
             newlob.created_by = request.user
             newlob.save()
+            request.user.logged_in_user.riding = request.POST['starter']
+            request.user.logged_in_user.save()
             newest = Lobbies.objects.last()
             newest.player.add(request.user.logged_in_user)
             return redirect('/gamelobby/pending/'+str(newest.id))
@@ -51,16 +53,19 @@ def pvpNew(request):
         return render(request, 'gamelobby/pvpnew.html', ctx)
 
 @login_required
-def joingame(request,room_name):
-    print("HERE")
+def joingame(request,room_name,starter):
+    
     currentroom = Lobbies.objects.get(id=room_name)
-    print(currentroom)
     currentroom.player.add(request.user.logged_in_user)
+    request.user.logged_in_user.riding = starter
+    request.user.logged_in_user.save()
     return redirect('/gamelobby/pending/' + str(room_name))
 
 @login_required
 def activegame(request,room_name):
     currentroom = Lobbies.objects.get(id=room_name)
+    for x in currentroom.player.all():
+        print(x.riding)
     ctx = {
         'activeroom': currentroom,
         'room_name_json': mark_safe(json.dumps(room_name)),

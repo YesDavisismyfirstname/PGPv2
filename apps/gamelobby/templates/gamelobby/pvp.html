@@ -31,17 +31,36 @@
                 <p class="pokefont-classic">{{ x.user }}</p>
                 {% endfor %}
             </div>
+            <div class="col-5">
+                <h3>Pick Racer</h3>
+                <img id="1" class="pickStarter selected d-inline m-2"
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+                    alt="Bulbasaur"></img>
+                <img id="4" class="pickStarter d-inline m-2"
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"
+                    alt="Charmander"></img>
+                <img id="7" class="pickStarter d-inline m-2"
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"
+                    alt="Squirtle"></img>
+                <img id="25" class="pickStarter d-inline m-2"
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+                    alt="Pika"></img>
+            </div>
             {% if request.user not in activeroom.player.all %}
-            <button id="launch_game" type="button" class="pokebtn pokefont-out2 col-4"><a
-                    href="/gamelobby/pvp/join/{{ activeroom.id }}">Join Game</a></button>
+            <a id="launch_game" class="pokebtn pokefont-out2 col-4"
+                    href="/gamelobby/pvp/join/{{ activeroom.id }}/1">Join Game</a>
             {% endif %}
         </div>
-
     </div>
 </div>
 {% endblock content %}
 {% block script %}
 <script>
+    $('.pickStarter').on('click', function () {
+        $('.pickStarter').removeClass('selected');
+        $(this).addClass('selected');
+        $('#launch_game').attr('href', "/gamelobby/pvp/join/{{ activeroom.id }}/" + $(this).attr('id'));
+    });
     var roomName = {{ room_name_json }};
 
     var chatSocket = new WebSocket(
@@ -73,6 +92,9 @@
         }));
 
         messageInputDom.value = '';
+
+
     };
+    
 </script>
 {% endblock script %}

@@ -38,7 +38,7 @@ class Player(models.Model):
     level = models.IntegerField(null=True)
     collected = models.ManyToManyField(Pokemon, related_name='playerCollected')
     lobby = models.ForeignKey(Lobbies, related_name='player',null=True, on_delete=models.SET_NULL)
-    riding = models.ForeignKey(Poke_Rider, related_name='player',null=True, on_delete=models.SET_NULL)
+    riding = models.IntegerField(null=True)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name='logged_in_user',on_delete=models.SET_NULL, null=True)  
     logged_in = models.BooleanField(default=False)

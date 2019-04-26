@@ -216,6 +216,21 @@ body {
     overflow: auto;
 }
 
+
+.pickStarter{
+    background-color: lightblue;
+    border: 1px solid green;
+    width: 100px;
+    height: 100px;
+}
+.pickStarter:hover{
+    background-color: rgb(98, 134, 146);
+}
+
+.selected {
+    background-color: #396bba;
+}
+
 ::-webkit-scrollbar {
     width: 10px;
   }
