@@ -12,6 +12,19 @@ body {
     height:95vh;
     width:95vw;
 }
+.page-w {
+    width: 100vw;
+    margin:0 auto;
+}
+
+.page-m {
+    width: 80vw;
+    margin:0 auto;
+}
+.page-s {
+    width: 60vw;
+    margin:0 auto;
+}
 .pokefont {
     font-family: Pokemon;
     font-size: 1.4em;
@@ -249,3 +262,40 @@ body {
   ::-webkit-scrollbar-thumb:hover {
     background: #555; 
   }
+
+  .overlay{
+      position: absolute;
+      z-index: 5;
+      margin-left: auto;
+      margin-right: auto;
+      left:0;
+      right:0;
+  }
+
+  .footermenu {
+      position: absolute;
+      margin-left: auto;
+      background-color: lightblue;
+      border-radius: 20px 20px 0 0 ;
+      border: 2px solid #396bba;
+      opacity: .9;
+      height: 80px;
+      z-index: 5;
+      margin-right: auto;
+      left:200;
+      bottom:0;
+      right:200;
+  }
+  
+#countdown {
+    position: absolute;
+    z-index: 10;
+    width: 100px;
+    height: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    left:0;
+    bottom:50%;
+    right:0;
+    text-align: center;
+}
