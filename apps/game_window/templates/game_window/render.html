@@ -1,9 +1,6 @@
-<!-- time for some merge conflicts -->
+
 {% extends 'game_window/game.html' %}
 {% load staticfiles %}
-{% block center %}
-<H1 id="countdown" class="Pokefont-out">GAME START</H1>
-{% endblock center%}
 {%block script %}
 
 <script>
@@ -38,11 +35,30 @@
         console.error('Chat socket closed unexpectedly');
     };
 
-    var pokearray = [13, 19, 21];
+    //document.querySelector('#chat-message-input').focus();
+    //document.querySelector('#chat-message-input').onkeyup = function (e) {
+    //    if (e.keyCode === 13) {  // enter, return
+    //        document.querySelector('#chat-message-submit').click();
+    //    }
+    //};
+
+    //document.querySelector('#chat-message-submit').onclick = function (e) {
+    //    var messageInputDom = document.querySelector('#chat-message-input');
+    //    var message = messageInputDom.value;
+    //    GameSocket.send(JSON.stringify({
+    //        'message': "{{ request.user }} posted:  " + message
+    //    }));
+
+    //    messageInputDom.value = '';
+    //};
+
+
+
     var scene
     var camera,
         renderer,
         mesh;
+    var tree;
     var level;
     var txloader = new THREE.TextureLoader();
     var Modelloader = new THREE.GLTFLoader();
@@ -55,49 +71,16 @@
     };
     var startPosition = []
     var clock = new THREE.Clock();
+    var ray,ray1,ray2,ray3,ray4,ray5,ray6,ray7,ray8
     var playerarray = []
     var players = JSON.parse("{{ players|escapejs }}")
+    console.log(players)
     for (x in players) {
         playerarray.push({
             'id': players[x]['fields']['user'],
             'pokemon': players[x]['fields']['riding']
         })
     }
-    THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
-        console.log(item, loaded, total);
-        if (loaded == total) {
-            activeplayer = scene.getObjectByName("player-{{ request.user.id }}")
-            camera = getCamera()
-            animate()
-            startGame()
-        }
-    };
-    function startGame() {
-        countDownDate = new Date().getTime();
-        countdown = 1;
-
-        var x = setInterval(function () {
-            var now = new Date().getTime();
-            GameSocket.send(JSON.stringify({
-                'message': "GAME STARTING IN :" + countdown
-            }));
-            var distance = countDownDate - now;
-            var countdownmessage = ["", "GO!", "1", "2", "3", ""];
-            $('#countdown').html(countdownmessage[parseInt(countdown)]);
-            console.log(countdownmessage)
-            countdown -= 1;
-            console.log(countdown);
-
-            if (countdown < 0) {
-                clearInterval(x)
-                window.addEventListener('keydown', keyDown);
-                window.addEventListener('keyup', keyUp);
-            }
-        }, 1000)
-    }
-
-
-
 
     tarray = {
         1: "grass.png",
@@ -108,52 +91,29 @@
         6: "fence",
     }
     modelpath = {
-        7: ["Zaun", [.1, .3, .05], "{% static '/game_window/images/models/fence/' %}", ["n", "n", -Math.PI / 2], .9],
-        6: ["Zaun", [.1, .3, .05], "{% static '/game_window/images/models/fence/' %}", ["n", "n", "n"], .5],
-        5: ["grass", [.05, .05, .05], "{% static '/game_window/images/models/tallgrass3/' %}", ["n", "n", "n"], 0],
-        4: ["Treefbx", [.01, .009, .04], "{% static '/game_window/images/models/tree/' %}", ["n", "n", "n"], 0]
+        6: ["Zaun", 1, "{% static '/game_window/images/models/fence/' %}"],
+        5: ["grass_lowfbx", .1, "{% static '/game_window/images/models/tallgrass/' %}"],
+        4: ["Treefbx", .03, "{% static '/game_window/images/models/tree/' %}"],
     }
     worldArray = [
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 2, 2, 2, 2, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 2, 2, 2, 2, 5, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 2, 2, 2, 2, 2, 7, 7, 7, 1, 1, 2, 2, 1, 1, 5, 4, 4],
-        [4, 4, 2, 2, 4, 1, 2, 2, 2, 4, 4, 4, 2, 2, 2, 2, 6, 1, 2, 2, 1, 1, 5, 4, 4],
-        [4, 4, 2, 2, 4, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 6, 1, 2, 2, 1, 1, 5, 4, 4],
-        [4, 4, 2, 2, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 5, 4, 4],
-        [4, 4, 2, 2, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 7, 2, 2, 7, 7, 7, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 1, 1, 1, 5, 5, 5, 5, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 6, 2, 2, 2, 2, 2, 2, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 4, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 6, 2, 2, 1, 1, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 2, 2, 1, 1, 6, 4, 4],
-        [4, 4, 2, 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 2, 2, 1, 1, 6, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 7, 7, 7, 7, 7, 7, 2, 2, 2, 2, 2, 2, 2, 6, 6, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 7, 7, 7, 7, 2, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 5, 2, 1, 1, 4, 4, 1, 1, 1, 4, 4, 1, 2, 2, 2, 2, 2, 6, 4, 4],
-        [4, 4, 2, 2, 4, 5, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 1, 1, 7, 7, 4, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 1, 1, 1, 1, 1, 1, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 2, 2, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 3, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 2, 2, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     function buildWorld() {
         var x = 0;
@@ -162,12 +122,7 @@
             for (var j = 0; j < worldArray[i].length; j++) {
                 if (worldArray[i][j] > 3) {
                     addPlane(tarray[worldArray[i][j]], txloader, x, y);
-                    addModel('scene.gltf', x, y, modelpath[worldArray[i][j]][0]
-                        , modelpath[worldArray[i][j]][1]
-                        , modelpath[worldArray[i][j]][2]
-                        , player = "NULL"
-                        , modelpath[worldArray[i][j]][3])
-                        , modelpath[worldArray[i][j]][4];
+                    addModel('scene.gltf', x, y, modelpath[worldArray[i][j]][0], modelpath[worldArray[i][j]][1], modelpath[worldArray[i][j]][2]);
                     x += 20;
                 } else {
                     addPlane(tarray[worldArray[i][j]], txloader, x, y);
@@ -175,6 +130,7 @@
                         startPosition = [x, y]
                     }
                     x += 20;
+
                 }
             }
             x = 0;
@@ -185,49 +141,143 @@
         for (var i = 0; i < playerarray.length; i++) {
             var pokeid = (playerarray[i]['pokemon'])
             console.log(pokeid)
-
-            addModel('scene.gltf', startPosition[0], startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
+            
+            addModel('scene.gltf', startPosition[0], startPosition[1], pokeid, .3, "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-"+playerarray[i]['id'])
         }
 
     }
-    function addModel(model, x, y, objname, scale, path, player = "NULL", rotation = ["n", "n", "n"], vertical) {
+    function loadModels() {
+        const loader = new THREE.GLTFLoader();
+
+        const onLoad = (gltf, position, id) => {
+            console.log(gltf.scene)
+            const model = gltf.scene.children[0].children[0].children[0].children[0];
+            model.position.copy(position);
+            model.name = "player-" + id
+            model.rotation.x -= Math.PI / 2;
+            model.rotation.z -= Math.PI / 2;
+            model.scale.set(0.3, 0.3, 0.3);
+
+            
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeRR = new THREE.Mesh( geometry, material );
+            rayCubeRR.position.x -= 6; 
+            rayCubeRR.position.y -=2;
+            rayCubeRR.position.z += 1;
+            model.add(rayCubeRR);            
+            ray1 = new THREE.Raycaster();
+            ray1.set(rayCubeRR.position, new THREE.Vector3(-1, 0, 0))
+            ray2 = new THREE.Raycaster();
+            ray2.set(rayCubeRR.position, new THREE.Vector3(0, -1, 0))
+            rayCubeRR.add(ray1);
+            rayCubeRR.add(ray2);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeLR = new THREE.Mesh( geometry, material );            
+            rayCubeLR.position.x -= 6;
+            rayCubeLR.position.y +=2;
+            rayCubeLR.position.z += 1;
+            model.add(rayCubeLR);
+            ray3 = new THREE.Raycaster();
+            ray3.set(rayCubeLR.position, new THREE.Vector3(-1, 0, 0))
+            ray4 = new THREE.Raycaster();
+            ray4.set(rayCubeLR.position, new THREE.Vector3(0, 1, 0))
+            rayCubeLR.add(ray3);
+            rayCubeLR.add(ray4);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeFL = new THREE.Mesh( geometry, material );
+            rayCubeFL.material.transparent = true;
+            rayCubeFL.position.x += 6;
+            rayCubeFL.position.y +=2;
+            rayCubeFL.position.z += 1;
+            model.add(rayCubeFL);
+            ray5 = new THREE.Raycaster();
+            ray5.set(rayCubeFL.position, new THREE.Vector3(1, 0, 0))
+            ray6 = new THREE.Raycaster();
+            ray6.set(rayCubeFL.position, new THREE.Vector3(0, 1, 0))
+            rayCubeFL.add(ray5);
+            rayCubeFL.add(ray6);
+
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            material.visible = false;
+            rayCubeFR = new THREE.Mesh( geometry, material );
+            rayCubeFR.material.transparent = true;
+            rayCubeFR.position.x += 6;
+            rayCubeFR.position.y -=2;
+            rayCubeFR.position.z += 1;
+            model.add(rayCubeFR);
+            ray7 = new THREE.Raycaster();
+            ray7.set(rayCubeFR.position, new THREE.Vector3(1, 0, 0))
+            ray8 = new THREE.Raycaster();
+            ray8.set(rayCubeFR.position, new THREE.Vector3(0, -1, 0))
+            rayCubeFR.add(ray7);
+            rayCubeFR.add(ray8);
+            
+            
+            
+            
+            scene.add(model);  
+        };
+        ModelCount = 1
+
+        var inter = setInterval(function () {
+            if (ModelCount <= playerarray.length) {
+                let playerpos = new THREE.Vector3(10, 0, 10);
+                loader.setPath("{% static '/game_window/images/bulby/'%}" + ModelCount + "/")
+                loader.load('scene.gltf', gltf => onLoad(gltf, playerpos, playerarray[ModelCount - 2]['id']))
+                ModelCount++
+            }
+            else {
+                var interval2 = setInterval(function () {
+                    if (ModelCount < playerarray.length + 2) {
+
+                        activeplayer = scene.getObjectByName("player-{{ request.user.id }}")
+                        camera = getCamera()
+                        //activeplayer.add(camera)
+
+                        ModelCount++
+                    } else {
+                        animate()
+                        clearInterval(inter)
+                        clearInterval(interval2)
+
+                    }
+                }, 400)
+            }
+        }, 500)
+    }
+
+    function addModel(model, x, y, objname, scale, path, player="NULL") {
 
         Modelloader.setPath(path)
         Modelloader.load(model, function (gltf) {
             newobj = gltf.scene.getObjectByName(objname.toString(), true);
             newobj.position.x = x;
-
-            newobj.scale.set(scale[0], scale[1], scale[2])
-            if (player != "NULL") {
+            newobj.position.y = y;
+            if (player != "NULL"){
                 newobj.name = player;
                 newobj.rotation.x -= Math.PI / 2;
                 newobj.rotation.z -= Math.PI / 2;
-                newobj.position.z = -y;
-                scene.add(newobj)
-            } else {
-                if (rotation[0] != "n") {
-                    newobj.rotation.x -= rotation[0]
-                }
-                if (rotation[1] != "n") {
-                    newobj.rotation.y -= rotation[1]
-                }
-                if (rotation[2] != "n") {
-                    newobj.rotation.z -= rotation[2]
-                }
-
-                newobj.position.y = y;
-                meshFloor.add(newobj)
             }
-
-
-
+            
+            newobj.scale.set(scale, scale, scale)
+            meshFloor.add(newobj)
         })
     }
     function addPlane(texture, loader = txloader, x, y) {
         loader.setPath("{% static '/game_window/images/textures/'%}")
         var texture = loader.load(texture);
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(3, 3);
+        texture.repeat.set(10, 10);
         var material = new THREE.MeshBasicMaterial({
             map: texture, side: THREE.DoubleSide
         });
@@ -256,6 +306,28 @@
         camera.lookAt(activeplayer.position);
     }
 
+    function checkForHit() {
+        var hit = 0;
+        hit += ray1.intersectObjects(meshFloor.children).length;
+        hit += ray2.intersectObjects(meshFloor.children).length;
+        hit += ray3.intersectObjects(meshFloor.children).length;
+        hit += ray4.intersectObjects(meshFloor.children).length;
+        hit += ray5.intersectObjects(meshFloor.children).length;
+        hit += ray6.intersectObjects(meshFloor.children).length;
+        hit += ray7.intersectObjects(meshFloor.children).length;
+        hit += ray8.intersectObjects(meshFloor.children).length;
+
+        console.log(hit);
+        
+        
+        
+           
+    }
+           
+       
+       
+    
+
     function init() {
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(1280, 720);
@@ -266,19 +338,35 @@
         light.position.set(0, 1000, 0);
         scene.add(light);
 
+        var amb_light = new THREE.AmbientLight(0xF9FCFF,2);
+        scene.add(amb_light);
+        
+
         meshFloor = new THREE.Mesh(
-            new THREE.PlaneGeometry(5, 5, 5, 5),
-            new THREE.MeshBasicMaterial({ color: 0xeeeeee })//, wireframe: USE_WIREFRAME })
+            new THREE.PlaneGeometry(100, 100, 100, 100),
+            new THREE.MeshBasicMaterial({ color: 0xFF004A })//, wireframe: USE_WIREFRAME })
         );
         meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
         scene.add(meshFloor);
         buildWorld();
+        //loadModels();
         loadPlayers()
+        THREE.DefaultLoadingManager.onProgress = function (item, loaded, total) {
+            console.log(item, loaded, total);
+
+            if (loaded == total) {
+                activeplayer = scene.getObjectByName("player-{{ request.user.id }}")
+                camera = getCamera()
+                animate()
+            }
+
+        };
+
     };
 
     function movePlayer() {
         var delta = clock.getDelta();
-        var moveDistance = 40 * delta;
+        var moveDistance = 20 * delta;
         var rotateAngle = Math.PI / 2 * delta;
         if (keyboard[87]) { // W 
             activeplayer.translateX(moveDistance)
@@ -308,11 +396,6 @@
             camera.rotation.y += player.turnSpeed;
         }
 
-        // if (keyboard[32]) {
-        //     console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
-        //     spawnPoke(activeplayer.position.x, activeplayer.position.z)
-        // }
-
         var rot = activeplayer.rotation
         var pos = [activeplayer.position.x, activeplayer.position.z, "{{request.user.id}}", rot]
 
@@ -320,27 +403,14 @@
             'position': pos
         }));
     }
-
-
-
-
-
-    function spawnPoke(x, z) {
-        id = pokearray[Math.floor(Math.random() * 3)]
-        console.log(id)
-        addModel('scene.gltf', x, z, id, [.3, .3, .3], "{% static '/game_window/images/bulby/'%}" + id + "/", "Spawn" + Math.floor(Math.random() * 1000))
-    }
-
-
-
-
-
     function animate() {
 
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
-        movePlayer()
-        moveCamera()
+        checkForHit();
+        movePlayer();
+        moveCamera();
+        
 
     }
 
@@ -352,6 +422,8 @@
         keyboard[event.keyCode] = false;
     }
 
+    window.addEventListener('keydown', keyDown);
+    window.addEventListener('keyup', keyUp);
     window.onload = init;
 
 </script>
