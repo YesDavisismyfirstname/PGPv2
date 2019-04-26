@@ -245,7 +245,6 @@
         camera.lookAt(scene.position);
         return camera;
     }
-
     function moveCamera() {
         var relativeCameraOffset = new THREE.Vector3(-25, 0, 9);
         var cameraOffset = relativeCameraOffset.applyMatrix4(activeplayer.matrixWorld);
@@ -254,10 +253,9 @@
         camera.position.z = cameraOffset.z;
         camera.lookAt(activeplayer.position);
     }
-
     function init() {
         renderer = new THREE.WebGLRenderer();
-        renderer.setSize(1280, 720);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
         scene = new THREE.Scene();
