@@ -1,0 +1,78 @@
+{% extends 'gamelobby/_game.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row m-3">
+    <div class="col-12">
+        <a class="btn btn-light pokefont-out2" href="/gamelobby/pvp/new">Start new game</a>
+    </div>
+    <div class="col-3 m-1 border">
+
+        <Table>
+            <thead>
+                <tr>
+                    <th>
+                        <h2 class="pokefont-classic">Open Games</h2>
+                    </th>
+                </tr>
+            </thead>
+            {% for x in rooms %}
+            <tr>
+                <td class="pokefont-classic room-name-select"><a href="/gamelobby/pvp/{{ x.id }}">{{ x.name }}</a></td>
+            </tr>
+            {% endfor %}
+        </Table>
+
+    </div>
+    <div class="col-8 m-1 border">
+        <h3 class="pokefont-out2 col-4 d-inline">Game Preview</h3>
+        <div class="row">
+            <h3 class="col-12"> Active Players</h3>
+            <div class="col-5 m-3 d-inline">{% for x in activeroom.player.all %}
+                <p class="pokefont-classic">{{ x.user }}</p>
+                {% endfor %}
+            </div>
+            {% if request.user not in activeroom.player.all %}
+            <button id="launch_game" type="button" class="pokebtn pokefont-out2 col-4"><a
+                    href="/gamelobby/pvp/join/{{ activeroom.id }}">Join Game</a></button>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#chat-log').value += (message + '\n');
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock script %}

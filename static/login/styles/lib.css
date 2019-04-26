@@ -1,0 +1,262 @@
+* {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    vertical-align: top;
+    text-decoration: none;
+}    
+
+.page-w {
+    width: 100vw;
+    margin:0 auto;
+}
+
+.page-m {
+    width: 80vw;
+    margin:0 auto;
+}
+.page-s {
+    width: 60vw;
+    margin:0 auto;
+}
+
+.rw {
+    width: 100%;
+    display:inline-block;
+}
+.rw > *{
+    display:inline-block;
+}
+
+div[class^="col"] {
+    padding: 5px;
+}
+.colm-16 {
+    width: 100%; 
+}
+.colm-15 {
+    width: 93.75%; 
+}
+.colm-14 {
+    width: 87.50%; 
+}
+.colm-13 {
+    width: 81.25; 
+}
+.colm-12 {
+    width: 75%; 
+}
+.colm-11 {
+    width: 68.75%; 
+}
+.colm-10 {
+    width: 61.50%; 
+}
+.colm-9 {
+    width: 56.25%; 
+}
+.colm-8 {
+    width: 50%; 
+}
+.colm-7 {
+    width: 43.75%; 
+}
+.colm-6 {
+    width: 37.5%; 
+}
+.colm-5 {
+    width: 31.25%; 
+}
+.colm-4 {
+    width: 25%; 
+}
+.colm-3 {
+    width: 18.75%; 
+}
+.colm-2 {
+    width: 11.50%; 
+}
+.colm-1 {
+    width: 6.25%; 
+}
+/* toggle formatters for expansion/ collapsing */
+.toggle-r {
+    width: 15px;
+    position: absolute;
+    right: 5px;
+}
+.rotate180 {
+    transform: rotate(180deg);
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -moz-transform: rotate(180deg); /* Firefox */
+    -webkit-transform: rotate(180deg); /* Safari and Chrome */
+    -o-transform: rotate(180deg); /* Opera */
+    }
+/*Header panels*/
+.head-lg h1 {
+    display: inline-block;
+    font-size: 2.5em;
+    width: 74%;
+    padding: 18px 20px;
+}
+.head-m h1 {
+    display: inline-block;
+    font-size: 2.0em;
+    width: 74%;
+    padding: 15px 15px;
+}
+.head-s h1 {
+    display: inline-block;
+    font-size: 1.5em;
+    width: 74%;
+    padding: 10px 10px;
+}
+
+    /* Horizontal Menus */
+.hmenu-lg {
+    overflow: hidden;
+    font-size: 24px;
+    width: 100%;
+    vertical-align: top;
+    padding: 10px 15px 0px 15px;
+    text-align: inherit;
+}
+
+.hmenu-lg a{
+    display: inline-block;
+    position: relative;
+    font-size: inherit;
+    min-width: 120px;
+    padding: 10px 15px;
+    line-height: 100%;
+    color: inherit;
+    background-color: inherit;
+    text-align: inherit;
+    border-right: 1px solid rgb(36, 36, 63);
+    
+}
+.hmenu-m {
+    overflow: hidden;
+    font-size: 18px;
+    width: 100%;
+    vertical-align: top;
+    padding: 10px 15px 0px 15px;
+    text-align: inherit;
+}
+.hmenu-m h1 {
+    display: inline-block;
+    width: 75%;
+    text-align: left;
+}
+.hmenu-m a{
+    display: inline-block;
+    position: relative;
+    font-size: inherit;
+    min-width: 120px;
+    padding: 10px 15px;
+    line-height: 100%;
+    color: inherit;
+    background-color: inherit;
+    text-align: inherit;
+    border-right: 1px solid rgb(36, 36, 63);
+    
+}
+.hmenu-sm {
+    overflow: hidden;
+    font-size: 18px;
+    width: 100%;
+    vertical-align: top;
+    padding: 5px;
+    text-align: inherit;
+}
+.hmenu-sm h4 {
+    display: inline-block;
+    text-align: center;
+}
+.hmenu-sm a{
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+    font-size: inherit;
+    min-width: 20px;
+    padding: 5px;
+    line-height: 100%;
+    color: inherit;
+    background-color: inherit;
+    text-align: inherit;
+    border-right: 1px solid rgb(36, 36, 63);
+    
+}
+.h-drop {
+    display: inline-block;
+    overflow: hidden;
+    font-size: inherit;
+    background-color: inherit;
+    text-align: inherit;
+
+}
+.h-drop .h-drop-link{
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 10px 15px;
+    text-align: inherit;
+
+}
+.h-sub {
+    display: none;
+    font-size: 90%;
+    position: absolute;
+    min-width: 120px;
+    z-index: 1;
+    background-color: inherit;
+    text-align: inherit;
+
+}
+.h-sub a,li,p,div {
+    display: block;
+    text-align: inherit;
+}
+
+.search-1{
+    display: inline-block;
+    width: 25%;
+    text-align: right;
+}
+.search-1 input {
+    display: inline-block;
+    width: 120px;
+    vertical-align: middle;
+    text-align: right;
+    padding: 5px;
+    margin: 25px 0px 0px 25px;
+    border-radius: 8px 0px 0px 8px;
+}
+.search-1 button {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    padding: 5px;
+    margin: 25px 0px 0px 0px;
+    border-radius: 0px 8px 8px 0px;
+}
+/* text formatters for alignment Note: all basic text elements are designed to inherit font-sizes from the parent divs. */
+p,div,ul,ol,li, a{
+    font-size: inherit;
+}
+.vat {
+    vertical-align: top;
+}
+.vac {
+    vertical-align: middle;
+}
+.vab {
+    vertical-align: bottom;
+}
+.tx-a-vc{
+    line-height:100%;
+}
+.tx-a-hc{
+    text-align: center;
+}

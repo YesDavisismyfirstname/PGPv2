@@ -1,0 +1,18 @@
+{% extends 'gamelobby/_game.html' %}
+{% load staticfiles%}
+{% block content %}
+<div id="gameselect" class="row justify-content-center ">
+    <div class="col-4 text-center">
+        <button class="gameMode" disabled>
+            <h2 class="pokefont-out">Adventure Mode</h2>
+            <img class="gamepic" src="{% static 'login/images/graphics/adventure-mode.jpg' %}" alt="adventureMode">
+        </button>
+    </div>
+    <div class="col-4 text-center">
+        <button class="gameMode"><a href="/gamelobby/pvp/">
+            <h2 class="pokefont-out">Multi-Player</h2>
+            <img class="gamepic" src="{% static 'login/images/graphics/multi-mode.jpg' %}" alt="adventureMode"></a>
+        </button>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>Demo 01</title>
+	
+    {%load static%}
+	</head>
+	<body style="text-align:center;">
+		<span style="position:absolute;top:0px;left:0px;"><input type="button" value="Toggle Wireframe" onclick="mesh.material.wireframe=!mesh.material.wireframe;meshFloor.material.wireframe=!meshFloor.material.wireframe;"/></span>
+    
+
+		<script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
+		<script src="http://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+		<script src="http://threejs.org/examples/js/loaders/ColladaLoader.js"></script>
+		<script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+
+    
+	{% block script %}
+	{% endblock script %}	
+	</body>
+</html>

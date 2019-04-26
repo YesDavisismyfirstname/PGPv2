@@ -1,0 +1,23 @@
+{% extends 'gamelobby/_game.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row m-3 justify-content-center">
+    <div class="col-8 m-4 border">
+        <H3 class="pokefont-classic">New Lobby</H3>
+        <form class="form-horizontal justify-content-center" action="/gamelobby/pvp/new" method="POST">
+            {% csrf_token %}
+            {% for x in lobby %}
+            <p class="col-12 "><small class="alert-danger">{{ x.errors }}</small></p>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label  pokefont-classic" for="id_{{ x.name }}">{{ x.label }}</label>
+                <div class="col-sm-8 pokefont-classic">{{ x }}</div>
+                <p class="text-center"><small>{{ x.help_text}}</small></p>
+            </div>
+            {% endfor %}
+            <p></p>
+            <button id="submit" class="btn btn-light border" type="submit">Submit</button>
+            <p>{{ errors }}</p>
+        </form>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% extends 'login/_base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div id="landing-btns" class="col-6 text-center">
+        <form action="{% url 'login:register' %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group row pokefont-out">
+                <b class="col-4">{{ field.label_tag }}</b>
+                <b class="col-6 form-control">{{ field }}</b>
+            </div>
+            {% endfor %}
+            <button class="pokefont-out2 pokebtn" type="submit">Create Trainer!</button>
+            <p class="pokefont-out">Already have an account? <a href="{% url 'login:login' %}">Log in!</a></p>
+        </form>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,208 @@
+/* Local Style options. 
+pfont is primary font family
+sfont is secondary font family
+style handles background color and font color
+tx-sz sets configurable font sizing (note relative sizing for headers)
+bg-nav options provide the structure for styling hovers and dropdowns on header nav bars. apply to either the entire header div or the menu itself
+*/
+@font-face { font-family: Pokemon; src: url('../images/fonts/poke.ttf'); }
+@font-face { font-family: PokemonClassic; src: url('../images/fonts/Pokemon_Classic.ttf'); }
+
+body {
+    height:95vh;
+    width:95vw;
+}
+.pokefont {
+    font-family: Pokemon;
+    font-size: 1.4em;
+}
+.pokefont-out {
+    font-family: Pokemon;
+    color: #ffe031;
+    font-size: 1.4em;
+    text-shadow: -1px -1px 0 #396bba, 1px -1px 0 #396bba, -1px 1px 0 #396bba, 1px 1px 0 #396bba;
+}
+.pokefont-out2 {
+    font-family: Pokemon;
+    color: #396bba;
+    text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+}
+.pokefont-classic {
+    font-family: PokemonClassic;
+    font-size: 1.4em;
+    color: white;
+}
+.bg-start {
+    background-image: url("../images/graphics/start-bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.bg-gamemode {
+    background-image: url("../images/graphics/game-lobby.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.pfont {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.sfont {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.style-pri-1{
+    background-color: white;
+}
+.tx-sz-sm {
+    font-size: .8em;
+}
+.style-pri-2 {
+    background-color: rgb(218, 218, 218);
+}
+.style-pri-3 {
+    background-color: rgb(26, 113, 148);
+    color: white;
+}
+.style-pri-4 {
+    background-color: rgb(163, 195, 241);
+}
+
+.bg-nav-1 {
+    background-color: rgb(26, 113, 148);
+    color: white;
+    
+} 
+.bg-nav-1 div > div a {
+    background-color: rgb(26, 113, 148);
+    color: white;
+} 
+
+.bg-nav-1 a:hover{
+    background-color: rgb(6, 60, 82);
+    color: white;
+
+} 
+
+.bg-nav-2 {
+    background-color: rgb(66, 66, 66);
+    color: white;
+} 
+
+.bg-nav-2 a:hover{
+    background-color: rgb(39, 51, 56);
+    color: white;
+    
+} 
+.bg-nav-3 {
+    background-color: rgb(126, 53, 53);
+    color: white;
+} 
+
+.bg-nav-3 a:hover{
+    background-color: rgb(104, 124, 133);
+    color: white;
+} 
+.bg-nav-4 {
+    background-color: white;
+    color: black;
+} 
+
+.bg-nav-4 a:hover{
+    background-color: rgb(104, 124, 133);
+    color: white;
+} 
+
+#pager{
+    width: 100%;
+    text-align: center;
+}
+#pager button{
+    background-color: white;
+    min-width: 35px;
+    display: inline-block;
+    border-right: 1px solid black;
+    padding: 5px;
+    color: black;
+} 
+
+#pager button:hover{
+    background-color: rgb(104, 124, 133);
+    color: white;
+} 
+#pager .current {
+    background-color: rgb(30, 88, 116);
+    color: white;
+} 
+
+.pokebtn {
+    font-size: 1.5em;
+    margin: 10px;
+    padding: 5px;
+    background-color: transparent;
+}
+.pokebtn:hover {
+    background-color: yellow;
+
+}
+.bk-btn {
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+}
+
+#login_form {
+    display: none;
+}
+#signup_form {
+    display: none;
+}
+.modehide {
+    display: none;
+}
+
+#headerGraphic {
+    z-index: 1;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+}
+
+.gameMode {
+
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 3px solid #396bba
+}
+.gameMode:hover {
+
+    background-color: #525b6e;
+
+}
+.gamepic {
+    width: 80%;
+    height: auto;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+
+}
+
+.btn-left {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+}
+.btn-right {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+}
+#carosel {
+    height: 300px;
+}

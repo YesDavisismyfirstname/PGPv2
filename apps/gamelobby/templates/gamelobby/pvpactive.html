@@ -1,0 +1,61 @@
+{% extends 'gamelobby/_game.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row m-3">
+    <div class="col-12">
+        <a class="btn btn-light pokefont-out2" href="/gamelobby/pvp/new">Start new game</a>
+    </div>
+    <div class="col-3 m-1 border">
+
+    </div>
+    <div class="col-8 m-1 border">
+        <h3 class="pokefont-out">{{ activeroom.name }}</h3>
+        <div id="chats">
+            <textarea class="pokefont-classic pvpchat" id="chat-log" cols="100" rows="10"></textarea><br />
+            <input class="pokefont-classic pvpchat" id="chat-message-input" type="text" size="100" /><br />
+            <input class="pokebtn pokefont-classic" id="chat-message-submit" type="button" value="Post" />
+        </div>
+        <h3> Active Players</h3>
+        {{ Lobbies.player.all }}
+        {% if x in Lobbies.player.all %}
+        <button id="launch_game" type="button" class="pokebtn pokefont-out2">START GAME</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#chat-log').value += (message + '\n');
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock script %}
