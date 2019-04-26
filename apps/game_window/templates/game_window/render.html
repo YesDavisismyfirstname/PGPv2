@@ -95,7 +95,11 @@
         }, 1000)
     }
 
-
+    var pokearray = [13,19,21];
+    function spawnPoke (x,z) {
+        id = pokearray[Math.floor(Math.random() * 3)]
+        addModel('scene.gltf',x,z,id,[.3,.3,.3],"{% static '/game_window/images/bulby/'%}"+id+"/", "Spawn" + Math.floor(Math.random() * 1000))
+    }
 
 
     tarray = {
@@ -185,7 +189,7 @@
             var pokeid = (playerarray[i]['pokemon'])
             console.log(pokeid)
 
-            addModel('scene.gltf', startPosition[0], startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
+            addModel('scene.gltf', startPosition[0] + 15, startPosition[1], pokeid, [.6, .6, .6], "{% static '/game_window/images/bulby/'%}" + pokeid + "/", "player-" + playerarray[i]['id'])
         }
 
     }
@@ -303,6 +307,9 @@
         }
         if (keyboard[39]) { // right arrow key
             camera.rotation.y += player.turnSpeed;
+        }
+        if (keyboard[32]){
+            console.log("x is " + activeplayer.position.x + "- y is " + activeplayer.position.z)
         }
 
         var rot = activeplayer.rotation
